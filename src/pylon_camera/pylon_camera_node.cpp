@@ -269,6 +269,20 @@ bool PylonCameraNode::startGrabbing()
             << "be adapted, so that the binning_y value in this msg remains 1");
     }
 
+    if ( pylon_camera_parameter_set_.reverse_x_given_ )
+    {
+        setReverseX(pylon_camera_parameter_set_.reverse_x_);
+        ROS_INFO_STREAM("Setting reverse_x to "
+                << pylon_camera_parameter_set_.reverse_x_);
+    }
+
+    if ( pylon_camera_parameter_set_.reverse_y_given_ )
+    {
+        setReverseY(pylon_camera_parameter_set_.reverse_y_);
+        ROS_INFO_STREAM("Setting reverse_y to "
+                << pylon_camera_parameter_set_.reverse_y_);
+    }
+
     if ( pylon_camera_parameter_set_.exposure_given_ )
     {
         float reached_exposure;
@@ -329,8 +343,8 @@ bool PylonCameraNode::startGrabbing()
             << "exposure = " << pylon_camera_->currentExposure() << ", "
             << "gain = " << pylon_camera_->currentGain() << ", "
             << "gamma = " <<  pylon_camera_->currentGamma() << ", "
-            << "shutter mode = "
-            << pylon_camera_parameter_set_.shutterModeString());
+            << "shutter mode = " << pylon_camera_parameter_set_.shutterModeString()
+            );
 
     // Framerate Settings
     if ( pylon_camera_->maxPossibleFramerate() < pylon_camera_parameter_set_.frameRate() )
@@ -985,6 +999,58 @@ bool PylonCameraNode::setBinningY(const size_t& target_binning_y,
                          pylon_camera_->imageRows(),
                          pylon_camera_->imageCols(),
                          pylon_camera_parameter_set_.downsampling_factor_exp_search_);
+    return true;
+}
+
+bool PylonCameraNode::setReverseX(const bool& target_reverse_x)
+{
+    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
+    if ( !pylon_camera_->setReverseX(target_reverse_x) )
+    {
+        // retry till timeout
+        ros::Rate r(10.0);
+        ros::Time timeout(ros::Time::now() + ros::Duration(2.0));
+        while ( ros::ok() )
+        {
+            if ( pylon_camera_->setReverseX(target_reverse_x) )
+            {
+                break;
+            }
+            if ( ros::Time::now() > timeout )
+            {
+                ROS_ERROR_STREAM("Error in setReverseX(): Unable to set target "
+                << "reverse_x setting before timeout");
+                return false;
+            }
+            r.sleep();
+        }
+    }
+    return true;
+}
+
+bool PylonCameraNode::setReverseY(const bool& target_reverse_y)
+{
+    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
+    if ( !pylon_camera_->setReverseY(target_reverse_y) )
+    {
+        // retry till timeout
+        ros::Rate r(10.0);
+        ros::Time timeout(ros::Time::now() + ros::Duration(2.0));
+        while ( ros::ok() )
+        {
+            if ( pylon_camera_->setReverseY(target_reverse_y) )
+            {
+                break;
+            }
+            if ( ros::Time::now() > timeout )
+            {
+                ROS_ERROR_STREAM("Error in setReverseY(): Unable to set target "
+                << "reverse_y setting before timeout");
+                return false;
+            }
+            r.sleep();
+        }
+    }
     return true;
 }
 

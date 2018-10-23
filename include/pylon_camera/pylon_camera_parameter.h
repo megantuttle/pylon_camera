@@ -130,6 +130,12 @@ public:
     bool binning_x_given_;
     bool binning_y_given_;
 
+
+    bool reverse_x_;
+    bool reverse_y_;
+    bool reverse_x_given_;
+    bool reverse_y_given_;
+
     /**
      * Factor that describes the image downsampling to speed up the exposure
      * search to find the desired brightness.

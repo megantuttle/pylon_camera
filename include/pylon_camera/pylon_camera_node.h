@@ -158,6 +158,20 @@ protected:
                      size_t& reached_binning_y);
 
     /**
+     * Update the reversal of the image
+     * @param target_reverse_x the target setting of reverse
+     * @return true if the targeted reversal could be reached
+     */
+    bool setReverseX(const bool& target_reverse_x);
+
+    /**
+     * Update the reversal of the image
+     * @param target_reverse_y the target setting of reverse
+     * @return true if the targeted reversal could be reached
+     */
+    bool setReverseY(const bool& target_reverse_y);
+
+    /**
      * Service callback for updating the cameras binning setting
      * @param req request
      * @param res response

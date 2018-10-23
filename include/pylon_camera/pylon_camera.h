@@ -144,6 +144,10 @@ public:
     virtual bool setBinningY(const size_t& target_binning_y,
                              size_t& reached_binning_y) = 0;
 
+    virtual bool setReverseX(const bool& target_reverse_X) = 0;
+
+    virtual bool setReverseY(const bool& target_reverse_y) = 0;
+
     /**
      * Detects the supported image pixel encodings of the camera an stores
      * them in a vector.

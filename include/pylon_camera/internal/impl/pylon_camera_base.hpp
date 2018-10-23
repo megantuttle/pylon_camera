@@ -620,6 +620,61 @@ bool PylonCameraImpl<CameraTraitT>::setBinningY(const size_t& target_binning_y,
 }
 
 template <typename CameraTraitT>
+bool PylonCameraImpl<CameraTraitT>::setReverseX(const bool& target_reverse_x)
+{
+    try
+    {
+        if ( GenApi::IsAvailable(cam_->ReverseX) )
+        {
+            cam_->StopGrabbing();
+            cam_->ReverseX.SetValue(target_reverse_x);
+            cam_->StartGrabbing();
+        }
+        else
+        {
+            ROS_WARN_STREAM("Camera does not support x reversal. Will keep the "
+                    << "current settings");
+        }
+    }
+    catch ( const GenICam::GenericException &e )
+    {
+        ROS_ERROR_STREAM("An exception while setting target "
+                << "reverse_x to " << target_reverse_x << " occurred: "
+                << e.GetDescription());
+        return false;
+    }
+    return true;
+}
+
+template <typename CameraTraitT>
+bool PylonCameraImpl<CameraTraitT>::setReverseY(const bool& target_reverse_y)
+{
+    try
+    {
+        if ( GenApi::IsAvailable(cam_->ReverseY) )
+        {
+            cam_->StopGrabbing();
+            cam_->ReverseY.SetValue(target_reverse_y);
+            cam_->StartGrabbing();
+        }
+        else
+        {
+            ROS_WARN_STREAM("Camera does not support y reversal. Will keep the "
+                    << "current settings");
+        }
+    }
+    catch ( const GenICam::GenericException &e )
+    {
+        ROS_ERROR_STREAM("An exception while setting target "
+                << "reverse_y to " << target_reverse_y << " occurred: "
+                << e.GetDescription());
+        return false;
+    }
+    return true;
+}
+
+
+template <typename CameraTraitT>
 bool PylonCameraImpl<CameraTraitT>::setExposure(const float& target_exposure,
                                                 float& reached_exposure)
 {
